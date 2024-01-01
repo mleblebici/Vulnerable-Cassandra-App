@@ -1,0 +1,29 @@
+version: '3'
+services:
+  cassandra:
+    image: cassandra:4.1.3
+    container_name: cassandra-container
+    ports:
+      - "9042:9042"
+    networks:
+      - my_network
+
+  flask-app:
+    restart: always
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: flask-app-container
+    ports:
+      - "8000:8000"
+    networks:
+      - my_network
+    depends_on:
+      - cassandra
+    environment:
+      - CASSANDRA_HOST=cassandra
+    entrypoint: ["/bin/bash", "/app-entrypoint.sh"]
+
+networks:
+  my_network:
+
